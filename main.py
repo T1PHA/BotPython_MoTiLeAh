@@ -3,23 +3,23 @@ import discord
 intents = discord.Intents().all()
 client = discord.Client(command_prefix=',', intents=intents)
 
-# Function to add a role to a user
+# Ajout d'un role 
 async def add_role(message, user, role):
-    # Check if the user has the role
+    # Regarde si l'user a deja le role
     if role in user.roles:
         return f'{user.mention} already has the {role} role.'
-    # Check if the user has the necessary permissions
+    # Vérifie les permissions
     elif message.author.guild_permissions.manage_roles:
         await user.add_roles(role)
         return f'{user.mention} has been given the {role} role.'
     else:
         return f'{message.author.mention} does not have permission to manage roles.'
 
-# Function to remove a role from a user
+# Suppression du rôle d'un utilisateur
 async def remove_role(message, user, role):
-    # Check if the user has the role
+    # Regarde si l'user a le role
     if role in user.roles:
-        # Check if the user has the necessary permissions
+        # Vérifie les permissions
         if message.author.guild_permissions.manage_roles:
             await user.remove_roles(role)
             return f'The {role} role has been removed from {user.mention}.'
@@ -29,28 +29,28 @@ async def remove_role(message, user, role):
         return f'{user.mention} does not have the {role} role.'
 
 
-# Function to create a role
+# Creation d'un role
 async def create_role(message, role_name, permissions):
-    # Check if the user has the necessary permissions
+    # Vérifie les permissions
     if message.author.guild_permissions.manage_roles:
-        # Create the role
+        # Creation
         new_role = await message.guild.create_role(name=role_name, permissions=permissions)
         return f'The {new_role} role has been created.'
     else:
         return f'{message.author.mention} does not have permission to manage roles.'
 
 
-# Function to delete a role
+# Suppression d'un role
 async def delete_role(message, role):
-    # Check if the user has the necessary permissions
+    # Vérifie les permissions
     if message.author.guild_permissions.manage_roles:
-        # Delete the role
+        # Supprime
         await role.delete()
         return f'The {role} role has been deleted.'
     else:
         return f'{message.author.mention} does not have permission to manage roles.'
 
-# Function to list all roles
+# Liste les roles
 async def list_roles(message):
     role_list = message.guild.roles
     role_names = []
@@ -58,7 +58,7 @@ async def list_roles(message):
         role_names.append(role.name)
     return '\n'.join(role_names)
 
-# Function to list the roles of a user
+# Liste les rôles d'un utilisateur
 async def list_user_roles(message, user):
     role_list = user.roles
     role_names = []
@@ -76,16 +76,16 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    # Split the message into command and arguments
+    # Divise le message en commande et arguments
     parts = message.content.split(' ')
     command = parts[0][1:].lower()
     args = parts[1:]
 
-    # Call the appropriate function for the command
+    # syntaxe des commandes
     if command == 'addrole':
         if len(args) < 2:
             return 'Please specify a user and role to add.'
-        # Get the user and role
+        # Prend l'user et le role
         user = discord.utils.get(message.guild.members, mention=args[0])
         if user is None:
             return 'That user does not exist.'
@@ -96,7 +96,7 @@ async def on_message(message):
     elif command == 'removerole':
         if len(args) < 2:
             return 'Please specify a user and role to remove.'
-        # Get the user and role
+        # Prends l'user et le role
         user = discord.utils.get(message.guild.members, mention=args[0])
         if user is None:
             return 'That user does not exist.'
@@ -121,7 +121,7 @@ async def on_message(message):
     elif command == 'listuserroles':
         if len(args) == 0:
             return 'Please specify a user to see their roles.'
-        # Get the user
+        # Prend l'user
         user = discord.utils.get(message.guild.members, mention=args[0])
         if user is None:
             return 'That user does not exist.'
