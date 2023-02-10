@@ -1,4 +1,6 @@
 import discord
+from discord.ext import commands
+import random
 
 intents = discord.Intents().all()
 client = discord.Client(command_prefix=',', intents=intents)
