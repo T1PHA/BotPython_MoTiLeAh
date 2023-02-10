@@ -130,4 +130,56 @@ async def on_message(message):
         response = 'Invalid command. Available commands: addrole, removerole, createrole, deleterole, listroles, listuserroles'
     await message.channel.send(response)
 
+# Bot initialisation
+bot = commands.Bot(command_prefix='!')
+
+# Liste des Pokémon disponibles pour le combat
+pokemon_list = ["Pikachu", "Bulbizarre", "Salamèche", "Carapuce", "Dracaufeu", "Mewtwo"]
+
+# Fonction pour gérer un tour de combat
+def combat_round(p1, p2):
+    # Sélection aléatoire des attaques de chaque Pokémon
+    p1_attack = random.randint(10, 20)
+    p2_attack = random.randint(10, 20)
+
+    # Détermination du Pokémon gagnant du tour
+    if p1_attack > p2_attack:
+        winner = p1
+    elif p2_attack > p1_attack:
+        winner = p2
+    else:
+        winner = None
+    
+    return (winner, p1_attack, p2_attack)
+
+@bot.command()
+async def battle(ctx, p1, p2):
+    # Vérifier que les Pokémon entrés sont valides
+    if p1 not in pokemon_list or p2 not in pokemon_list:
+        await ctx.send("Un ou plusieurs des Pokémon entrés ne sont pas valides. Veuillez entrer des Pokémon valides à partir de la liste suivante : " + ', '.join(pokemon_list))
+        return
+
+    # Lancer un message pour annoncer le début du combat
+    await ctx.send(f"Le combat entre {p1} et {p2} a commencé ! Que le meilleur gagne !")
+
+    # Déterminer le nombre de tours de combat
+    rounds = random.randint(3, 7)
+
+    # Boucle pour gérer chaque tour de combat
+    for i in range(rounds):
+        (winner, p1_attack, p2_attack) = combat_round(p1, p2)
+        if winner:
+            await ctx.send(f"Tour {i + 1}: {winner} gagne avec une attaque de {p1_attack if winner == p1 else p2_attack}")
+        else:
+            await ctx.send(f"Tour {i + 1}: égalité avec des attaques de {p1_attack} pour {p1} et {p2_attack} pour {p2}")
+    
+    # Déterminer le gagnant final
+    if p1_attack > p2_attack:
+        await ctx.send(f"{p1} a gagné le combat avec une attaque finale de {p1_attack} contre {p2_attack} pour {p2} !")
+    elif p2_attack > p1_attack:
+        await ctx.send(f"{p2} a gagné le combat avec une attaque finale de {p2_attack} contre {p1_attack} pour {p1} !")
+    else:
+        await ctx.send(f"Le combat est terminé en égalité entre {p1} et {p2} avec des attaques finales de {p1_attack} pour {p1} et {p2_attack} pour {p2} !")
+
+
 client.run('# A METTRE LA VOTRE #')
