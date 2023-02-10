@@ -183,5 +183,26 @@ async def battle(ctx, p1, p2):
     else:
         await ctx.send(f"Le combat est terminé en égalité entre {p1} et {p2} avec des attaques finales de {p1_attack} pour {p1} et {p2_attack} pour {p2} !")
 
+@client.event
+async def on_message(message):
+    if message.content.startswith('!mute'):
+        user = message.mentions[0]
+        role = discord.utils.get(message.guild.roles, name="Sanctionner")
+        await user.add_roles(role)
+        print("ajout role")
+        await message.channel.send(f'{user.mention} a été mute.')
+        print("L'utilisateur ne peut plus parler")
+    if message.content.startswith('!unmute'):
+        user = message.mentions[0]
+        role = discord.utils.get(message.guild.roles, name="Sanctionner")
+        await user.remove_roles(role)
+        print("retrait role")
+        await message.channel.send(f'{user.mention} a été unmute.')
+        print("Utilisateur peut reparler")
+    if message.content.startswith('!ban'):
+        user = message.mentions[0]
+        await user.ban()
+        await message.channel.send(f'{user.mention} a été banni.')
+        print("Utilisateur bannis")
 
 client.run('# A METTRE LA VOTRE #')
