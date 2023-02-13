@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import random
+import openai
 
 intents = discord.Intents().all()
 client = discord.Client(command_prefix=',', intents=intents)
@@ -133,7 +134,7 @@ async def on_message(message):
     await message.channel.send(response)
 
 # Bot initialisation
-bot = commands.Bot(command_prefix='!')
+bot = commands.Bot(command_prefix='!',intents=intents)
 
 # Liste des Pokémon disponibles pour le combat
 pokemon_list = ["Pikachu", "Bulbizarre", "Salamèche", "Carapuce", "Dracaufeu", "Mewtwo"]
@@ -205,4 +206,39 @@ async def on_message(message):
         await message.channel.send(f'{user.mention} a été banni.')
         print("Utilisateur bannis")
 
+
+
+#bot Chat GPT
+
+openai.api_key = "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"
+
+intents.members = True
+bot = commands.Bot(command_prefix='!', intents=intents)
+
+def get_response(question):
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=f"{question}",
+        max_tokens=1024,
+        n=1,
+        stop=None,
+        temperature=0.5,
+    ).get("choices")[0].text
+    print(f'Received response: {response}')
+    return response
+
+# Définir une tâche pour fournir des réponses à des questions
+@bot.command(name='ask', help='Ask the bot a question')
+async def ask(ctx, *, question: str):
+    print(f'Received question: {question}')
+    response = get_response(question)
+    await ctx.send(response)
+
+
+# Écouter pour l'événement de connexion du bot
+@bot.event
+async def on_ready():
+    print(f'{bot.user} est connecté!')
+
+# Démarrer le bot
 client.run('# A METTRE LA VOTRE #')
